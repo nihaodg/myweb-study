@@ -153,12 +153,32 @@
 }
 
 .input-dark {
-    @apply w-full bg-gray-800 border border-gray-600 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    background-color: #1f2937 !important;
+    border: 1px solid #374151 !important;
+    color: #ffffff !important;
+    width: 100%;
+    padding: 0.625rem 0.75rem !important;
+    border-radius: 0.5rem;
+    outline: none;
+    transition: all 0.2s;
+    font-size: 0.875rem;
 }
 
 .input-dark::placeholder {
-    @apply text-gray-500;
+    color: #6b7280 !important;
+}
+
+.input-dark:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5) !important;
+}
+
+.input-dark:-webkit-autofill,
+.input-dark:-webkit-autofill:hover,
+.input-dark:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #1f2937 inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 .language-badge {
