@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF-Web 漏洞学习平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .vulnerability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-900 text-gray-200 p-6">
+    <div class="max-w-6xl mx-auto space-y-8">
+        <!-- Header -->
+        <header class="border-b border-gray-700 pb-6">
+            <div class="flex items-center gap-3 mb-2">
+                <i data-lucide="shield-alert" class="w-8 h-8 text-blue-400"></i>
+                <h1 class="text-3xl font-bold text-white">CTF-Web 漏洞学习平台</h1>
+            </div>
+            <p class="text-gray-400">交互式学习 Web 安全漏洞的原理、复现与修复。点击任意漏洞开始学习。</p>
+        </header>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 text-center">
+                <div class="text-3xl font-bold text-blue-400" id="total-count">0</div>
+                <div class="text-sm text-gray-500">漏洞总数</div>
+            </div>
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 text-center">
+                <div class="text-3xl font-bold text-red-400" id="high-count">0</div>
+                <div class="text-sm text-gray-500">高危漏洞</div>
+            </div>
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 text-center">
+                <div class="text-3xl font-bold text-yellow-400" id="medium-count">0</div>
+                <div class="text-sm text-gray-500">中危漏洞</div>
+            </div>
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 text-center">
+                <div class="text-3xl font-bold text-green-400" id="low-count">0</div>
+                <div class="text-sm text-gray-500">低危漏洞</div>
+            </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="flex flex-wrap gap-2">
+            <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white transition-all" data-filter="all">
+                全部
+            </button>
+            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-700 text-gray-300 hover:bg-gray-600 transition-all" data-filter="high">
+                高危
+            </button>
+            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-700 text-gray-300 hover:bg-gray-600 transition-all" data-filter="medium">
+                中危
+            </button>
+            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-700 text-gray-300 hover:bg-gray-600 transition-all" data-filter="low">
+                低危
+            </button>
+        </div>
+
+        <!-- Vulnerability Grid -->
+        <div class="vulnerability-grid" id="vulnerability-grid">
+            <!-- Cards will be rendered here -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
+            <p>CTF-Web 漏洞学习平台 | 仅供学习交流，请勿用于非法用途</p>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="fixed inset-0 bg-gray-900/90 flex items-center justify-center z-50">
+        <div class="text-center">
+            <i data-lucide="loader-2" class="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4"></i>
+            <p class="text-gray-400">加载中...</p>
+        </div>
+    </div>
+
+    <script src="assets/js/vulnerabilities.js"></script>
+    <script>
+        let vulnerabilities = [];
+        
+        async function loadVulnerabilities() {
+            try {
+                const response = await fetch('assets/js/vulnerabilities.json');
+                const data = await response.json();
+                vulnerabilities = data.vulnerabilities;
+                renderVulnerabilities();
+                updateStats();
+            } catch (error) {
+                console.error('Failed to load vulnerabilities:', error);
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+        
+        function getIcon(iconName) {
+            const iconMap = {
+                'database': 'database',
+                'code': 'code',
+                'refresh-cw': 'refresh-cw',
+                'terminal': 'terminal',
+                'globe': 'globe',
+                'upload': 'upload',
+                'lock': 'lock',
+                'file-code': 'file-code'
+            };
+            return iconMap[iconName] || 'alert-circle';
+        }
+        
+        function getDifficultyClass(difficulty) {
+            const classes = {
+                'high': 'difficulty-high',
+                'medium': 'difficulty-medium',
+                'low': 'difficulty-low'
+            };
+            return classes[difficulty] || 'difficulty-medium';
+        }
+        
+        function getDifficultyText(difficulty) {
+            const texts = {
+                'high': '高危',
+                'medium': '中危',
+                'low': '低危'
+            };
+            return texts[difficulty] || '中危';
+        }
+        
+        function getColorClass(color) {
+            const classes = {
+                'red': 'text-red-400 bg-red-500/20 border-red-500/50',
+                'yellow': 'text-yellow-400 bg-yellow-500/20 border-yellow-500/50',
+                'purple': 'text-purple-400 bg-purple-500/20 border-purple-500/50',
+                'blue': 'text-blue-400 bg-blue-500/20 border-blue-500/50',
+                'orange': 'text-orange-400 bg-orange-500/20 border-orange-500/50',
+                'cyan': 'text-cyan-400 bg-cyan-500/20 border-cyan-500/50',
+                'green': 'text-green-400 bg-green-500/20 border-green-500/50'
+            };
+            return classes[color] || 'text-gray-400 bg-gray-500/20 border-gray-500/50';
+        }
+        
+        function renderVulnerabilities(filter = 'all') {
+            const grid = document.getElementById('vulnerability-grid');
+            const filtered = filter === 'all' 
+                ? vulnerabilities 
+                : vulnerabilities.filter(v => v.difficulty === filter);
+            
+            grid.innerHTML = filtered.map(v => `
+                <a href="vulnerability/${v.id}/index.html" class="vulnerability-card block">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-12 h-12 rounded-lg ${getColorClass(v.color)} border flex items-center justify-center">
+                                <i data-lucide="${getIcon(v.icon)}" class="w-6 h-6"></i>
+                            </div>
+                            <span class="difficulty-badge ${getDifficultyClass(v.difficulty)}">
+                                ${getDifficultyText(v.difficulty)}
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">${v.name}</h3>
+                        <p class="text-sm text-gray-400 mb-3">${v.description}</p>
+                        <div class="flex flex-wrap gap-1">
+                            ${v.tags.map(tag => `
+                                <span class="px-2 py-0.5 rounded text-xs bg-gray-700 text-gray-400">${tag}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="px-5 py-3 bg-gray-950/50 border-t border-gray-700 flex items-center justify-between">
+                        <span class="text-sm text-gray-500">${v.name_en}</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500"></i>
+                    </div>
+                </a>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+        
+        function updateStats() {
+            document.getElementById('total-count').textContent = vulnerabilities.length;
+            document.getElementById('high-count').textContent = vulnerabilities.filter(v => v.difficulty === 'high').length;
+            document.getElementById('medium-count').textContent = vulnerabilities.filter(v => v.difficulty === 'medium').length;
+            document.getElementById('low-count').textContent = vulnerabilities.filter(v => v.difficulty === 'low').length;
+        }
+        
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-blue-600', 'text-white');
+                    b.classList.add('bg-gray-700', 'text-gray-300');
+                });
+                btn.classList.add('active', 'bg-blue-600', 'text-white');
+                btn.classList.remove('bg-gray-700', 'text-gray-300');
+                renderVulnerabilities(btn.dataset.filter);
+            });
+        });
+        
+        // Initialize
+        loadVulnerabilities();
+    </script>
+</body>
+</html>
