@@ -45,17 +45,17 @@
         @apply bg-gray-950 rounded-md p-4 overflow-x-auto font-mono text-sm;
     }
     
-    .code-line {
-        @apply flex gap-4 py-1;
-    }
+.code-line {
+    @apply flex gap-4 py-1 whitespace-pre;
+}
     
     .code-line-number {
         @apply text-gray-600 w-8 text-right flex-shrink-0 select-none;
     }
     
-    .code-line-content {
-        @apply flex-1;
-    }
+.code-line-content {
+    @apply flex-1 whitespace-pre;
+}
     
     .code-line.highlight {
         @apply bg-red-900/30 border-l-2 border-red-500;
@@ -153,7 +153,12 @@
 }
 
 .input-dark {
-    @apply w-full bg-gray-950 border border-gray-700 text-gray-300 px-3 py-2 rounded focus:outline-none focus:border-blue-500 shadow-inner;
+    @apply w-full bg-gray-800 border border-gray-600 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.input-dark::placeholder {
+    @apply text-gray-500;
 }
 
 .language-badge {
