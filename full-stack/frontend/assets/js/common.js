@@ -7,37 +7,51 @@ const VulnerabilityUtils = {
         return urlParams.get(param);
     },
 
-    // Format code with syntax highlighting
+    // Format code with syntax highlighting (先高亮再转义)
     highlightCode(code, language) {
-        // Simple syntax highlighting
-        let highlighted = this.escapeHtml(code);
-        
-        // Keywords
+        // Keywords definition
         const keywords = {
-            'java': /\b(public|private|protected|class|interface|extends|implements|static|final|void|int|String|boolean|if|else|for|while|return|new|try|catch|throw|throws|import|package)\b/g,
-            'php': /\b(function|class|public|private|protected|if|else|foreach|while|return|echo|new|try|catch|throw|extends|implements|namespace|use|as|isset|unset|die|exit)\b/gi,
-            'python': /\b(def|class|if|elif|else|for|while|return|import|from|as|try|catch|raise|with|lambda|yield|pass|break|continue|and|or|not|in|is|True|False|None|self)\b/gi,
-            'go': /\b(func|package|import|var|const|type|struct|interface|if|else|for|range|switch|case|default|return|go|defer|select|chan|map|make|new|nil|true|false)\b/g
+            'java': ['public', 'private', 'protected', 'class', 'interface', 'extends', 'implements', 'static', 'final', 'void', 'int', 'String', 'boolean', 'if', 'else', 'for', 'while', 'return', 'new', 'try', 'catch', 'throw', 'throws', 'import', 'package'],
+            'php': ['function', 'class', 'public', 'private', 'protected', 'if', 'else', 'foreach', 'while', 'return', 'echo', 'new', 'try', 'catch', 'throw', 'extends', 'implements', 'namespace', 'use', 'as', 'isset', 'unset', 'die', 'exit'],
+            'python': ['def', 'class', 'if', 'elif', 'else', 'for', 'while', 'return', 'import', 'from', 'as', 'try', 'except', 'raise', 'with', 'lambda', 'yield', 'pass', 'break', 'continue', 'and', 'or', 'not', 'in', 'is', 'True', 'False', 'None', 'self'],
+            'go': ['func', 'package', 'import', 'var', 'const', 'type', 'struct', 'interface', 'if', 'else', 'for', 'range', 'switch', 'case', 'default', 'return', 'go', 'defer', 'select', 'chan', 'map', 'make', 'new', 'nil', 'true', 'false']
         };
-        
-        if (keywords[language]) {
-            highlighted = highlighted.replace(keywords[language], '<span class="text-purple-400">$1</span>');
-        }
-        
-        // Strings
-        highlighted = highlighted.replace(/(["'`])(?:(?!\1)[^\\]|\\.)*\1/g, '<span class="text-green-400">$&</span>');
-        
-        // Comments
-        highlighted = highlighted.replace(/(\/\/.*$|\#.*$)/gm, '<span class="text-gray-500">$1</span>');
-        
-        return highlighted;
+
+        // Process line: highlight keywords, strings, comments
+        let processed = this.escapeHtml(code);
+
+        // Highlight strings first (to protect them from keyword replacement)
+        processed = processed.replace(/(&quot;|&apos;|&lt;|&gt;)|(&quot;)(?:(?!2)[^\\]|\\.)*\2|(&apos;)(?:(?!3)[^\\]|\\.)*\3|`(?:[^\\`]|\\.)*`/g, (match) => {
+            return '<span class="text-green-400">' + match + '</span>';
+        });
+
+        // Unescape the string spans back (we don't want to escape content inside strings)
+        processed = processed.replace(/&lt;span class="text-green-400"&gt;/g, '<span class="text-green-400">');
+        processed = processed.replace(/&lt;\/span&gt;/g, '</span>');
+
+        // Highlight comments
+        processed = processed.replace(/(\/\/[^\n]*|\#[^\n]*)/g, '<span class="text-gray-500">$1</span>');
+
+        // Highlight keywords (word boundary, not inside tags)
+        const langKeywords = keywords[language] || keywords['java'];
+        langKeywords.forEach(kw => {
+            const regex = new RegExp('\\b(' + kw + ')\\b', 'g');
+            processed = processed.replace(regex, '<span class="text-purple-400">$1</span>');
+        });
+
+        return processed;
     },
 
-    // Escape HTML
+    // Escape HTML special characters
     escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        };
+        return text.replace(/[&<>"']/g, m => map[m]);
     },
 
     // Render code with line numbers
