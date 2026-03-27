@@ -79,9 +79,41 @@
       "description": "解析XML时引入外部实体，读取服务器敏感文件",
       "color": "green",
       "tags": ["文件读取", "内网探测", "高危"]
+    },
+    {
+      "id": "deserialize",
+      "name": "反序列化漏洞",
+      "name_en": "Deserialization",
+      "difficulty": "high",
+      "icon": "box",
+      "description": "不安全的反序列化导致远程代码执行",
+      "color": "pink",
+      "tags": ["RCE", "Java", "Python", "高危"],
+      "children": [
+        {"id": "deserialize-java", "name": "Java反序列化"},
+        {"id": "deserialize-python", "name": "Python反序列化"},
+        {"id": "deserialize-php", "name": "PHP反序列化"},
+        {"id": "deserialize-js", "name": "JS反序列化"}
+      ]
+    },
+    {
+      "id": "ssti",
+      "name": "服务器端模板注入",
+      "name_en": "Server-Side Template Injection",
+      "difficulty": "high",
+      "icon": "cpu",
+      "description": "在模板引擎中注入恶意代码，获取服务器权限",
+      "color": "indigo",
+      "tags": ["RCE", "模板引擎", "高危"],
+      "children": [
+        {"id": "ssti-jinja2", "name": "Jinja2注入"},
+        {"id": "ssti-twig", "name": "Twig注入"},
+        {"id": "ssti-thymeleaf", "name": "Thymeleaf注入"},
+        {"id": "ssti-freemarker", "name": "FreeMarker注入"}
+      ]
     }
-  ],
-  "vulnerability_details": {
+  ]
+}
     "sqli": {
       "overview": "SQL注入攻击是一种将恶意SQL代码注入到应用程序的SQL查询中的攻击方式。当应用程序将用户输入直接拼接到SQL语句中而没有进行适当的过滤或参数化查询时，攻击者就可以操纵查询结构。",
       "impact": ["数据泄露（用户密码、敏感信息）", "数据篡改或删除", "绕过认证和授权", "在某些情况下执行系统命令"],

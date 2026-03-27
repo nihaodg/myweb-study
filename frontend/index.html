@@ -108,7 +108,9 @@
                 'globe': 'globe',
                 'upload': 'upload',
                 'lock': 'lock',
-                'file-code': 'file-code'
+                'file-code': 'file-code',
+                'box': 'box',
+                'cpu': 'cpu'
             };
             return iconMap[iconName] || 'alert-circle';
         }
@@ -139,7 +141,9 @@
                 'blue': 'text-blue-400 bg-blue-500/20 border-blue-500/50',
                 'orange': 'text-orange-400 bg-orange-500/20 border-orange-500/50',
                 'cyan': 'text-cyan-400 bg-cyan-500/20 border-cyan-500/50',
-                'green': 'text-green-400 bg-green-500/20 border-green-500/50'
+                'green': 'text-green-400 bg-green-500/20 border-green-500/50',
+                'pink': 'text-pink-400 bg-pink-500/20 border-pink-500/50',
+                'indigo': 'text-indigo-400 bg-indigo-500/20 border-indigo-500/50'
             };
             return classes[color] || 'text-gray-400 bg-gray-500/20 border-gray-500/50';
         }
@@ -150,31 +154,46 @@
                 ? vulnerabilities 
                 : vulnerabilities.filter(v => v.difficulty === filter);
             
-            grid.innerHTML = filtered.map(v => `
-                <a href="vulnerability/${v.id}/index.html" class="vulnerability-card block">
-                    <div class="p-5">
-                        <div class="flex items-start justify-between mb-3">
-                            <div class="w-12 h-12 rounded-lg ${getColorClass(v.color)} border flex items-center justify-center">
-                                <i data-lucide="${getIcon(v.icon)}" class="w-6 h-6"></i>
-                            </div>
-                            <span class="difficulty-badge ${getDifficultyClass(v.difficulty)}">
-                                ${getDifficultyText(v.difficulty)}
-                            </span>
+            grid.innerHTML = filtered.map(v => {
+                const hasChildren = v.children && v.children.length > 0;
+                return `
+                <div class="mb-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg ${getColorClass(v.color)} border flex items-center justify-center">
+                            <i data-lucide="${getIcon(v.icon)}" class="w-5 h-5"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2">${v.name}</h3>
-                        <p class="text-sm text-gray-400 mb-3">${v.description}</p>
-                        <div class="flex flex-wrap gap-1">
-                            ${v.tags.map(tag => `
-                                <span class="px-2 py-0.5 rounded text-xs bg-gray-700 text-gray-400">${tag}</span>
+                        <div>
+                            <h2 class="text-xl font-bold text-white">${v.name}</h2>
+                            <p class="text-gray-500 text-sm">${v.name_en} - ${v.description}</p>
+                        </div>
+                    </div>
+                    ${hasChildren ? `
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 ml-4">
+                            ${v.children.map(child => `
+                                <a href="vulnerability/${child.id}/index.html" 
+                                   class="block bg-gray-800 rounded-lg border border-gray-700 p-4 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all group">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-300 group-hover:text-white">${child.name}</span>
+                                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500"></i>
+                                    </div>
+                                </a>
                             `).join('')}
                         </div>
-                    </div>
-                    <div class="px-5 py-3 bg-gray-950/50 border-t border-gray-700 flex items-center justify-between">
-                        <span class="text-sm text-gray-500">${v.name_en}</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500"></i>
-                    </div>
-                </a>
-            `).join('');
+                    ` : `
+                        <a href="vulnerability/${v.id}/index.html" 
+                           class="block bg-gray-800 rounded-lg border border-gray-700 p-4 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all ml-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-300">点击进入学习</span>
+                                <div class="flex gap-2">
+                                    <span class="${getDifficultyClass(v.difficulty)} px-2 py-0.5 rounded text-xs">${getDifficultyText(v.difficulty)}</span>
+                                    <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500"></i>
+                                </div>
+                            </div>
+                        </a>
+                    `}
+                </div>
+                `;
+            }).join('');
             
             lucide.createIcons();
         }
