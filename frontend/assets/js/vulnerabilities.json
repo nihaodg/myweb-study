@@ -8,7 +8,14 @@
       "icon": "database",
       "description": "通过用户输入修改SQL语句结构，实现未授权数据库操作",
       "color": "red",
-      "tags": ["OWASP", "数据库", "认证绕过"]
+      "tags": ["OWASP", "数据库", "认证绕过"],
+      "children": [
+        {"id": "sqli-char", "name": "字符型注入"},
+        {"id": "sqli-num", "name": "数值型注入"},
+        {"id": "sqli-boolean", "name": "Boolean盲注"},
+        {"id": "sqli-time", "name": "时间盲注"},
+        {"id": "sqli-union", "name": "UNION注入"}
+      ]
     },
     {
       "id": "xss",
@@ -58,7 +65,13 @@
       "icon": "upload",
       "description": "未校验上传文件类型，可上传恶意文件获取服务器权限",
       "color": "orange",
-      "tags": ["webshell", "RCE", "高危"]
+      "tags": ["webshell", "RCE", "高危"],
+      "children": [
+        {"id": "file-upload-mime", "name": "MIME类型绕过"},
+        {"id": "file-upload-ext", "name": "扩展名绕过"},
+        {"id": "file-upload-null", "name": "00截断"},
+        {"id": "file-upload-double", "name": "双写绕过"}
+      ]
     },
     {
       "id": "auth-bypass",
