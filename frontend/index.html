@@ -6,82 +6,58 @@
     <title>CTF-Web 漏洞学习平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="assets/css/style.css?v=2">
-    <style>
-        .vulnerability-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="min-h-screen bg-gray-900 text-gray-200 p-6">
-    <div class="max-w-6xl mx-auto space-y-8">
+<body class="min-h-screen bg-gray-900 text-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-10 space-y-10">
         <!-- Header -->
-        <header class="border-b border-gray-700 pb-6">
-            <div class="flex items-center gap-3 mb-2">
-                <i data-lucide="shield-alert" class="w-8 h-8 text-blue-400"></i>
-                <h1 class="text-3xl font-bold text-white">CTF-Web 漏洞学习平台</h1>
+        <header class="text-center pb-8 border-b border-gray-700">
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <i data-lucide="shield-alert" class="w-12 h-12 text-blue-400"></i>
+                <h1 class="text-4xl font-bold text-white">CTF-Web 漏洞学习平台</h1>
             </div>
-            <p class="text-gray-400">交互式学习 Web 安全漏洞的原理、复现与修复。点击任意漏洞开始学习。</p>
+            <p class="text-gray-400 text-lg">交互式学习 Web 安全漏洞的原理、复现与修复</p>
+            <p class="text-gray-500 text-sm mt-2">点击任意模块开始学习</p>
         </header>
 
         <!-- Stats -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 text-center">
+            <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 text-center hover:border-blue-500 transition-all">
                 <div class="text-3xl font-bold text-blue-400" id="total-count">0</div>
-                <div class="text-sm text-gray-500">漏洞总数</div>
+                <div class="text-sm text-gray-500 mt-1">漏洞总数</div>
             </div>
-            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 text-center">
+            <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 text-center hover:border-red-500 transition-all">
                 <div class="text-3xl font-bold text-red-400" id="high-count">0</div>
-                <div class="text-sm text-gray-500">高危漏洞</div>
+                <div class="text-sm text-gray-500 mt-1">高危漏洞</div>
             </div>
-            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 text-center">
+            <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 text-center hover:border-yellow-500 transition-all">
                 <div class="text-3xl font-bold text-yellow-400" id="medium-count">0</div>
-                <div class="text-sm text-gray-500">中危漏洞</div>
+                <div class="text-sm text-gray-500 mt-1">中危漏洞</div>
             </div>
-            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 text-center">
+            <div class="bg-gray-800 rounded-xl border border-gray-700 p-5 text-center hover:border-green-500 transition-all">
                 <div class="text-3xl font-bold text-green-400" id="low-count">0</div>
-                <div class="text-sm text-gray-500">低危漏洞</div>
+                <div class="text-sm text-gray-500 mt-1">低危漏洞</div>
             </div>
         </div>
 
-        <!-- Filter -->
-        <div class="flex flex-wrap gap-2">
-            <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white transition-all" data-filter="all">
-                全部
-            </button>
-            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-700 text-gray-300 hover:bg-gray-600 transition-all" data-filter="high">
-                高危
-            </button>
-            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-700 text-gray-300 hover:bg-gray-600 transition-all" data-filter="medium">
-                中危
-            </button>
-            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-700 text-gray-300 hover:bg-gray-600 transition-all" data-filter="low">
-                低危
-            </button>
-        </div>
-
-        <!-- Vulnerability Grid -->
-        <div class="vulnerability-grid" id="vulnerability-grid">
-            <!-- Cards will be rendered here -->
+        <!-- Vulnerability Categories -->
+        <div id="vulnerability-list" class="space-y-8">
         </div>
 
         <!-- Footer -->
-        <footer class="border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
+        <footer class="border-t border-gray-700 pt-8 text-center text-gray-500 text-sm">
             <p>CTF-Web 漏洞学习平台 | 仅供学习交流，请勿用于非法用途</p>
         </footer>
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loading" class="fixed inset-0 bg-gray-900/90 flex items-center justify-center z-50">
+    <div id="loading" class="fixed inset-0 bg-gray-900/95 flex items-center justify-center z-50">
         <div class="text-center">
-            <i data-lucide="loader-2" class="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4"></i>
-            <p class="text-gray-400">加载中...</p>
+            <i data-lucide="loader-2" class="w-16 h-16 text-blue-400 animate-spin mx-auto mb-4"></i>
+            <p class="text-gray-400 text-lg">加载中...</p>
         </div>
     </div>
 
-    <script src="assets/js/vulnerabilities.js"></script>
     <script>
         let vulnerabilities = [];
         
@@ -115,24 +91,6 @@
             return iconMap[iconName] || 'alert-circle';
         }
         
-        function getDifficultyClass(difficulty) {
-            const classes = {
-                'high': 'difficulty-high',
-                'medium': 'difficulty-medium',
-                'low': 'difficulty-low'
-            };
-            return classes[difficulty] || 'difficulty-medium';
-        }
-        
-        function getDifficultyText(difficulty) {
-            const texts = {
-                'high': '高危',
-                'medium': '中危',
-                'low': '低危'
-            };
-            return texts[difficulty] || '中危';
-        }
-        
         function getColorClass(color) {
             const classes = {
                 'red': 'text-red-400 bg-red-500/20 border-red-500/50',
@@ -148,53 +106,41 @@
             return classes[color] || 'text-gray-400 bg-gray-500/20 border-gray-500/50';
         }
         
-        function renderVulnerabilities(filter = 'all') {
-            const grid = document.getElementById('vulnerability-grid');
-            const filtered = filter === 'all' 
-                ? vulnerabilities 
-                : vulnerabilities.filter(v => v.difficulty === filter);
-            
-            grid.innerHTML = filtered.map(v => {
+        function renderVulnerabilities() {
+            const container = document.getElementById('vulnerability-list');
+            container.innerHTML = vulnerabilities.map(v => {
                 const hasChildren = v.children && v.children.length > 0;
                 return `
-                <div class="mb-8">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-lg ${getColorClass(v.color)} border flex items-center justify-center">
-                            <i data-lucide="${getIcon(v.icon)}" class="w-5 h-5"></i>
+                <div class="bg-gray-800/50 rounded-2xl border border-gray-700 p-6 hover:border-gray-600 transition-all">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="w-14 h-14 rounded-xl ${getColorClass(v.color)} border-2 flex items-center justify-center">
+                            <i data-lucide="${getIcon(v.icon)}" class="w-7 h-7"></i>
                         </div>
-                        <div>
-                            <h2 class="text-xl font-bold text-white">${v.name}</h2>
-                            <p class="text-gray-500 text-sm">${v.name_en} - ${v.description}</p>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-white mb-1">${v.name}</h2>
+                            <p class="text-gray-500 text-sm">${v.name_en}</p>
                         </div>
                     </div>
                     ${hasChildren ? `
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 ml-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                             ${v.children.map(child => `
                                 <a href="vulnerability/${child.id}/index.html" 
-                                   class="block bg-gray-800 rounded-lg border border-gray-700 p-4 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all group">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-300 group-hover:text-white">${child.name}</span>
-                                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500"></i>
-                                    </div>
+                                   class="flex items-center justify-between bg-gray-900/50 rounded-xl border border-gray-700 px-4 py-3 hover:border-blue-500 hover:bg-gray-900 transition-all group">
+                                    <span class="text-gray-300 group-hover:text-white font-medium">${child.name}</span>
+                                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-600 group-hover:text-blue-400 transition-colors"></i>
                                 </a>
                             `).join('')}
                         </div>
                     ` : `
                         <a href="vulnerability/${v.id}/index.html" 
-                           class="block bg-gray-800 rounded-lg border border-gray-700 p-4 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all ml-4">
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-300">点击进入学习</span>
-                                <div class="flex gap-2">
-                                    <span class="${getDifficultyClass(v.difficulty)} px-2 py-0.5 rounded text-xs">${getDifficultyText(v.difficulty)}</span>
-                                    <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500"></i>
-                                </div>
-                            </div>
+                           class="flex items-center justify-between bg-gray-900/50 rounded-xl border border-gray-700 px-5 py-4 hover:border-blue-500 hover:bg-gray-900 transition-all group">
+                            <span class="text-gray-300 group-hover:text-white font-medium">点击进入学习</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-600 group-hover:text-blue-400 transition-colors"></i>
                         </a>
                     `}
                 </div>
                 `;
             }).join('');
-            
             lucide.createIcons();
         }
         
@@ -204,19 +150,6 @@
             document.getElementById('medium-count').textContent = vulnerabilities.filter(v => v.difficulty === 'medium').length;
             document.getElementById('low-count').textContent = vulnerabilities.filter(v => v.difficulty === 'low').length;
         }
-        
-        // Filter buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => {
-                    b.classList.remove('active', 'bg-blue-600', 'text-white');
-                    b.classList.add('bg-gray-700', 'text-gray-300');
-                });
-                btn.classList.add('active', 'bg-blue-600', 'text-white');
-                btn.classList.remove('bg-gray-700', 'text-gray-300');
-                renderVulnerabilities(btn.dataset.filter);
-            });
-        });
         
         // Initialize
         loadVulnerabilities();
